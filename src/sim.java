@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -861,20 +862,29 @@ public class sim {
 		ROB.printOut();
 		System.out.println(instrCount);
 		System.out.println("instruction data:");
+
+		PrintWriter writer = new PrintWriter("runOutput.txt", "UTF-8");
+		//writer.println("The first line");
+		//writer.println("The second line");
+		
 		for (int i = 0; i < instrList.size(); i++)
 		//for (int i = 0; i < 4; i++)
 		{
 			entry = instrList.get(i);
-			System.out.println(
-				"\t" + i + ": FE entry:" + entry[FE][0] + " FE time:" + entry[FE][1] + 
-				" DE entry:" + entry[DE][0] + " DE time:" + entry[DE][1] + " RN entry:" + entry[RN][0] +
-				" RN time:" + entry[RN][1] + " RR entry:" + entry[RR][0] + " RR time:" + entry[RR][1] +
-				" DI entry:" + entry[DI][0] + " DI time: " + entry[DI][1] + " IS entry:" + entry[IS][0] + 
-				" IS time:" + entry[IS][1] + " EX entry:" + entry[EX][0] + " EX time:" + entry[EX][1] +
-				" WB entry:" + entry[WB][0] + " WB time:" + entry[WB][1] + " RT entry:" + entry[RT][0] + 
-				" RT time:" + entry[RT][1]
+			writer.println(
+				i + " " + "fu{" + entry[opTypeIL][0] + "} " + "src{" + entry[src1][0] + "," + entry[src2][0] + "} " + 
+				"dst{" + entry[dstIL][0] + "} " + "FE{" + entry[FE][0] + "," + entry[FE][1] + "} " + 
+				"DE{" + entry[DE][0] + "," + entry[DE][1] + "} " +
+				"RN{" + entry[RN][0] + "," + entry[RN][1] + "} " + 
+				"RR{" + entry[RR][0] + "," + entry[RR][1] + "} " +
+				"DI{" + entry[DI][0] + "," + entry[DI][1] + "} " + 
+				"IS{" + entry[IS][0] + "," + entry[IS][1] + "} " + 
+				"EX{" + entry[EX][0] + "," + entry[EX][1] + "} " +
+				"WB{" + entry[WB][0] + "," + entry[WB][1] + "} " + 
+				"RT{" + entry[RT][0] + "," + entry[RT][1] + "}"
 			);
 		}
+		writer.close();
 		
 		System.out.println("cycle count: " + cycleCount);
 		
