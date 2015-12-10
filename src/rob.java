@@ -75,7 +75,11 @@ public class rob {
 		//System.out.println(this.tail);
 		this.buffer[this.tail] = add;
 		
-		if (this.tail == this.head) this.full = true;
+		if (this.tail == this.head) 
+		{
+			//this.printOut();
+			this.full = true;
+		}
 		
 		return this.tail;
 	}
@@ -110,7 +114,7 @@ public class rob {
 		if (this.head == this.tail)
 		{
 			this.empty = true;
-			System.out.println("empty!");
+			//System.out.println("empty!");
 			//this.printOut();
 			//throw new NullPointerException();
 		}

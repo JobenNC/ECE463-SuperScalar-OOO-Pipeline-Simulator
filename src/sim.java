@@ -119,7 +119,7 @@ public class sim {
 		while (end != true) {
 		//while (cycleCount < 8) {
 			count = 0;
-			System.out.println("CYCLE NO:" + cycleCount + " ---------------------------------------------------");
+			//System.out.println("CYCLE NO:" + cycleCount + " ---------------------------------------------------");
 			
 			
 			//Retire
@@ -132,7 +132,7 @@ public class sim {
 				int[] retired = ROB.retire();
 				if (retired[seqNoIL] == lastInstr) 
 				{
-					System.out.println("handles last instr: " + retired[seqNoIL]);
+					//System.out.println("handles last instr: " + retired[seqNoIL]);
 					end = true;
 				}
 				retCount++;
@@ -145,10 +145,10 @@ public class sim {
 				// how does this work?
 				int retiredDst = 1;
 				//System.out.println(retired[retiredDst]);
-				if (retired[retiredDst] != -1) System.out.println(RMT[retired[retiredDst]][rt]);
+				//if (retired[retiredDst] != -1) System.out.println(RMT[retired[retiredDst]][rt]);
 				if ((retired[retiredDst] != -1) && (RMT[retired[retiredDst]][rt] == retired[retiredRT])) 
 				{
-					System.out.println("Clearing RMT entry:" + retired[retiredDst]);
+					//System.out.println("Clearing RMT entry:" + retired[retiredDst]);
 					RMT[retired[retiredDst]][valid] = 0;
 				}
 				//update timing data!
@@ -158,16 +158,17 @@ public class sim {
 				//entry[RT][1] = (cycleCount - entry[RT][0]);
 				instrList.set(retired[seqNoIL], entry);
 				
-				System.out.println(
+				/*System.out.println(
 					"Retiring in cycle:" + cycleCount + " Instr num:" + 
 					retired[seqNoIL]
-				);
-				ROB.printOut();
+				);*/
+				//ROB.printOut();
 			}
 			
 			//Writeback ----------------------------------------------------------------------------
 			//for each instr in WB, mark the instr as ready in its ROB entry
 			//then remove from WBReg
+			if (WBReg.size() > width*5) throw new NullPointerException();
 			for (Iterator<int[]> iter = WBReg.iterator(); iter.hasNext();)
 			{	//TODO: no upper limit here?
 				wbEntry = iter.next();
@@ -182,14 +183,14 @@ public class sim {
 				//entry[RT][0] = cycleCount+1;
 				instrList.set(wbEntry[seqNoIL], entry);
 				
-				System.out.println(
+				/*System.out.println(
 					"Write Back in cycle:" + cycleCount + " Instr num:" + 
 					wbEntry[seqNoIL] + " opType:" + wbEntry[opTypeIL] + " dstIL:" + 
 					wbEntry[dstIL] + " src1:" + wbEntry[src1] + " src2:" + 
 					wbEntry[src2] + " dstRob:" + wbEntry[dstRob] + " src1Rob:" +
 					wbEntry[src1Rob] + " src2Rob:" + wbEntry[src2Rob] + 
 					" instRobTag:" + wbEntry[instRobTag]
-				);
+				);*/
 			}
 			
 			//Execute -----------------------------------------------------------------------------
@@ -199,6 +200,7 @@ public class sim {
 				//3 - wakeup dep insts (set their src op ready flags) in the IQ,
 				//		DI (dispatch bundle), and the RR (rr bundle)
 			//for (int i = 0; i < exec_list.size(); i++)
+			if (exec_list.size() > width*5) throw new NullPointerException();
 			for (Iterator<int[]> iter = exec_list.iterator(); iter.hasNext();)
 			{
 				
@@ -227,11 +229,11 @@ public class sim {
 					
 					//wake up
 					//TODO: debug only
-					if (wbEntry[instRobTag] == 3)
+					/*if (wbEntry[instRobTag] == 3)
 					{
 						System.out.println("----" + cycleCount);
 						System.out.println("stop");
-					}
+					}*/
 					//set src op rdy flags in IQ, DI, RR bundles
 					//if rob true for src & src is our robTag, check ROB for readiness, 
 					//if true set rob to false.  Done?
@@ -240,17 +242,17 @@ public class sim {
 					{
 						//TODO: can't wake up from rob tags?
 						iqEntry = IQ.get(i);
-						System.out.println("checking instr:" + iqEntry[seqNoIL]);
+						//System.out.println("checking instr:" + iqEntry[seqNoIL]);
 						if ((iqEntry[src1Rob] == 1) && (iqEntry[src1] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from IQ: " + iqEntry[seqNoIL] + " Reg 1");
+							//System.out.println("Waking up from IQ: " + iqEntry[seqNoIL] + " Reg 1");
 							//System.out.println(ROB.get(wbEntry[instRobTag])[seqNoIL]);
 							iqEntry[src1Rob] = 0;
 							
 						}
 						if ((iqEntry[src2Rob] == 1) && (iqEntry[src2] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from IQ: " + iqEntry[seqNoIL] + " Reg 2");
+							//System.out.println("Waking up from IQ: " + iqEntry[seqNoIL] + " Reg 2");
 							iqEntry[src2Rob] = 0;
 							
 						}
@@ -262,12 +264,12 @@ public class sim {
 						if (DIReg[i][valid] == 0) break;
 						if ((DIReg[i][src1Rob] == 1) && (DIReg[i][src1] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from DI: " + DIReg[i][seqNoIL] + " Reg 1");
+							//System.out.println("Waking up from DI: " + DIReg[i][seqNoIL] + " Reg 1");
 							DIReg[i][src1Rob] = 0;
 						}
 						if ((DIReg[i][src2Rob] == 1) && (DIReg[i][src2] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from DI: " + DIReg[i][seqNoIL] + " Reg 2");
+							//System.out.println("Waking up from DI: " + DIReg[i][seqNoIL] + " Reg 2");
 							DIReg[i][src2Rob] = 0;
 						}
 						
@@ -278,12 +280,12 @@ public class sim {
 						if (RRReg[i][valid] == 0) break;
 						if ((RRReg[i][src1Rob] == 1) && (RRReg[i][src1] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from RR: " + RRReg[i][seqNoIL] + " Reg 1");
+							//System.out.println("Waking up from RR: " + RRReg[i][seqNoIL] + " Reg 1");
 							RRReg[i][src1Rob] = 0;
 						}
 						if ((RRReg[i][src2Rob] == 1) && (RRReg[i][src2] == wbEntry[instRobTag]))
 						{
-							System.out.println("Waking up from RR: " + RRReg[i][seqNoIL] + " Reg 2");
+							//System.out.println("Waking up from RR: " + RRReg[i][seqNoIL] + " Reg 2");
 							RRReg[i][src2Rob] = 0;
 						}	
 					}
@@ -297,14 +299,14 @@ public class sim {
 					instrList.set(wbEntry[seqNoIL], entry);
 					
 					//log
-					System.out.println(
+					/*System.out.println(
 						"Finishing execution in cycle:" + cycleCount + " Instr num:" + 
 						wbEntry[seqNoIL] + " opType:" + wbEntry[opTypeIL] + " dstIL:" + 
 						wbEntry[dstIL] + " src1:" + wbEntry[src1] + " src2:" + 
 						wbEntry[src2] + " dstRob:" + wbEntry[dstRob] + " src1Rob:" +
 						wbEntry[src1Rob] + " src2Rob:" + wbEntry[src2Rob] + 
 						" instRobTag:" + wbEntry[instRobTag]
-					);
+					);*/
 				}
 			}
 			
@@ -346,7 +348,7 @@ public class sim {
 				//don't issue unless all ops are ready!
 				//if ((iqEntry[src1Rob] == 0) && (iqEntry[src2Rob] == 0))
 				//{
-					IQ.remove(oldestIndex);
+				IQ.remove(oldestIndex);
 				
 					//add to exec list! reinitialize new array before adding?
 				
@@ -386,14 +388,14 @@ public class sim {
 					
 					instrList.set(iqEntry[seqNoIL], entry);
 					
-					System.out.println(
+					/*System.out.println(
 						"Issuing in cycle:" + cycleCount + " Instr num:" + 
 						elEntry[seqNoIL] + " opType:" + elEntry[opTypeIL] + " dstIL:" + 
 						elEntry[dstIL] + " src1:" + elEntry[src1] + " src2:" + 
 						elEntry[src2] + " dstRob:" + elEntry[dstRob] + " src1Rob:" +
 						elEntry[src1Rob] + " src2Rob:" + elEntry[src2Rob] + 
 						" instRobTag:" + elEntry[instRobTag] + " timer:" + elEntry[timer]
-					);
+					);*/
 				//}
 				
 			}
@@ -407,11 +409,12 @@ public class sim {
 				//to the IQ
 			
 			//check IQ space left
-			for (int i = 0; i < iqSize; i ++)
+			for (int i = 0; i <= iqSize; i ++)
 			{
 				//TODO: Will this ever be a problem?
 				//if the IQ is longer than i
 				iqSpace = iqSize - i;
+				//iqSpace = iqSize;
 				if (IQ.size() > i)
 				{
 					iqEntry = IQ.get(i);
@@ -430,7 +433,8 @@ public class sim {
 				
 			}
 			
-			System.out.println("IQ space:" + iqSpace + " DI bundle len:" + bundleLen);
+			
+			//System.out.println("IQ space:" + iqSpace + " DI bundle len:" + bundleLen);
 			if ((DIReg[0][valid] == 1) && iqSpace >= bundleLen)
 			{
 				for (int i = 0; i < width; i++)
@@ -453,6 +457,12 @@ public class sim {
 					//add to IQ at end
 					IQ.add(iqEntry);
 					
+					if (IQ.size() > iqSize) 
+					{
+						System.out.println(iqSpace);
+						throw new NullPointerException();
+					}
+					
 					//remove from RR
 					DIReg[i][valid] = 0;
 					
@@ -469,14 +479,32 @@ public class sim {
 					//entry[DI][0] = cycleCount;
 					instrList.set(DIReg[i][seqNoIL], entry);
 					
-					System.out.println(
+					if (DIReg[i][seqNoIL] == 9618) 
+					{
+						System.out.println(iqSpace);
+						System.out.println("IQ data:");
+						for (int j = 0; j < IQ.size(); j++)
+						{
+							iqEntry = IQ.get(j);
+							System.out.println(
+								j +": " + "\t cycle No:" + cycleCount + " seq No:" + 
+								iqEntry[seqNoIL] + " opType:" + iqEntry[opTypeIL] + " dstIL:" + 
+								iqEntry[dstIL] + " src1:" + iqEntry[src1] + " src2:" + 
+								iqEntry[src2] + " dstRob:" + iqEntry[dstRob] + " src1Rob:" +
+								iqEntry[src1Rob] + " src2Rob:" + iqEntry[src2Rob] + 
+								" instRobTag:" + iqEntry[instRobTag]
+							);
+						}
+					}
+					
+					/*System.out.println(
 							"Dispatched on cycle " + cycleCount + ": " + 
 							iqEntry[seqNoIL] + " opType:" + iqEntry[opTypeIL] + " dstIL:" + 
 							iqEntry[dstIL] + " src1:" + iqEntry[src1] + " src2:" + 
 							iqEntry[src2] + " dstRob:" + iqEntry[dstRob] + " src1Rob:" +
 							iqEntry[src1Rob] + " src2Rob:" + iqEntry[src2Rob] + 
 							" instRobTag:" + iqEntry[instRobTag]
-					);
+					);*/
 					
 				}
 				
@@ -498,17 +526,17 @@ public class sim {
 
 					//ascertain readiness of renamed src ops
 					//if src is a rob tag, check ready bit!
-					if (RRReg[i][seqNoIL] == 8)
+					/*if (RRReg[i][seqNoIL] == 8)
 					{
 						System.out.println(RRReg[i][src1Rob]);
 						System.out.println("stop");
-					}
+					}*/
 					if (RRReg[i][src1Rob] == 1)
 					{
-						if (RRReg[i][seqNoIL] == 8)
+						/*if (RRReg[i][seqNoIL] == 8)
 						{
 							System.out.println("stop");
-						}
+						}*/
 						if (ROB.isReady(RRReg[i][src1]))
 						{
 							//we don't need to track that original reg val anymore, do we?
@@ -525,7 +553,7 @@ public class sim {
 					
 					if (RRReg[i][src2Rob] == 1)
 					{
-						System.out.println(RRReg[i][src2]);
+						//System.out.println(RRReg[i][src2]);
 						if (ROB.isReady(RRReg[i][src2]))
 						{
 							
@@ -562,14 +590,14 @@ public class sim {
 					//entry[RR][0] = cycleCount;
 					instrList.set(RRReg[i][seqNoIL], entry);
 					
-					System.out.println(
+					/*System.out.println(
 							"Register Read on cycle " + cycleCount + ": " + 
 							DIReg[i][seqNoIL] + " opType:" + DIReg[i][opTypeIL] + " dstIL:" + 
 							DIReg[i][dstIL] + " src1:" + DIReg[i][src1] + " src2:" + 
 							DIReg[i][src2] + " dstRob:" + DIReg[i][dstRob] + " src1Rob:" +
 							DIReg[i][src1Rob] + " src2Rob:" + DIReg[i][src2Rob] + 
 							" instRobTag:" + DIReg[i][instRobTag]
-					);
+					);*/
 				}
 			}
 			
@@ -591,7 +619,7 @@ public class sim {
 				
 			}
 			//also chekc for open ROB entries
-			System.out.println("bundle read into RN: " + bundleLen);
+			//System.out.println("bundle read into RN: " + bundleLen);
 			
 			if ((RNReg[0][valid] == 1) && (RRReg[0][valid]== 0) && (ROB.getSpace() >= bundleLen))
 			{ 
@@ -601,7 +629,7 @@ public class sim {
 					//instr is palced in rob, dstIL replaed w/ rob tag in RR stage
 					//this is just to mark the instr
 					robTag = ROB.put(RNReg[i]);
-					ROB.printOut();
+					//ROB.printOut();
 					RRReg[i][valid] = 1;
 					RRReg[i][instRobTag] = robTag;
 					
@@ -609,10 +637,10 @@ public class sim {
 					//rename src reg1
 					if ((RNReg[i][src1] != -1) && (RMT[RNReg[i][src1]][valid] == 1))
 					{	
-						if (RNReg[i][seqNoIL] == 8)
+						/*if (RNReg[i][seqNoIL] == 8)
 						{
 							System.out.println("stop");
-						}
+						}*/
 						RRReg[i][src1Rob] = 1;
 						RRReg[i][src1] = RMT[RNReg[i][src1]][rt];
 					}
@@ -640,7 +668,7 @@ public class sim {
 						RRReg[i][dstRob] = 1;
 						RRReg[i][dstIL] = robTag;
 						//update the RMT
-						System.out.println("Updating RMT in rename, entry:" + RNReg[i][dstIL] + " val:" + robTag);
+						//System.out.println("Updating RMT in rename, entry:" + RNReg[i][dstIL] + " val:" + robTag);
 						RMT[RNReg[i][dstIL]][valid] = 1;
 						RMT[RNReg[i][dstIL]][rt] = robTag;
 						
@@ -666,14 +694,14 @@ public class sim {
 					//entry[RN][0] = cycleCount;
 					instrList.set(RNReg[i][seqNoIL], entry);
 					
-					System.out.println(
+					/*System.out.println(
 						"Ranamed on cycle " + cycleCount + ": " + 
 						RRReg[i][seqNoIL] + " opType:" + RRReg[i][opTypeIL] + " dstIL:" + 
 						RRReg[i][dstIL] + " src1:" + RRReg[i][src1] + " src2:" + 
 						RRReg[i][src2] + " dstRob:" + RRReg[i][dstRob] + " src1Rob:" +
 						RRReg[i][src1Rob] + " src2Rob:" + RRReg[i][src2Rob] + 
 						" instRobTag:" + RRReg[i][instRobTag]
-					);
+					);*/
 				}
 			}
 			
@@ -714,11 +742,11 @@ public class sim {
 					entry[RN][0] = cycleCount+1;
 					instrList.set(DEReg[i][seqNoIL], entry);
 		
-					System.out.println(
+					/*System.out.println(
 						"Decoding on cycle " + cycleCount + " seqNo:" +  
 						DEReg[i][seqNoIL] + " opType:" + DEReg[i][opTypeIL] + " dst:" + 
 						DEReg[i][dstIL] + " src1:" + DEReg[i][src1] + " src2:" + DEReg[i][src2]
-					);
+					);*/
 					
 				}
 				
@@ -758,11 +786,11 @@ public class sim {
 					
 					instrList.add(instrCount-1, entry);
 					
-					System.out.println(
+					/*System.out.println(
 						"Fetching on cycle " + cycleCount + " instrCount:" + 
 						(instrCount-1) + " opType:" + opType + " dstReg:" + dstReg + 
 						" srcReg1:" + srcReg1 + " srcReg2:" + srcReg2
-					);
+					);*/
 					
 					//put into DE, they go into the reg in program order
 					//TODO: need to unset valid!
@@ -800,7 +828,7 @@ public class sim {
 		cycleCount++;
 		
 		//if (cycleCount >= 23000)
-		if (cycleCount >= 3000)
+		/*if (cycleCount >= 3000)
 		{
 			ROB.printOut();
 			System.out.println(ROB.canRetire());
@@ -827,22 +855,6 @@ public class sim {
 			}
 			
 			System.out.println(instrCount);
-			/*System.out.println("instruction data:");
-			for (int i = 0; i < instrList.size(); i++)
-			{
-				entry = instrList.get(i);
-				System.out.println(
-					"\t" + i + ": FE entry:" + entry[FE][0] + " FE time:" + entry[FE][1] + 
-					" DE entry:" + entry[DE][0] + " DE time:" + entry[DE][1] + " RN entry:" + entry[RN][0] +
-					" RN time:" + entry[RN][1] + " RR entry:" + entry[RR][0] + " RR time:" + entry[RR][1] +
-					" DI entry:" + entry[DI][0] + " DI time: " + entry[DI][1] + " IS entry:" + entry[IS][0] + 
-					" IS time:" + entry[DI][1] + " EX entry:" + entry[EX][0] + " EX time:" + entry[EX][1] +
-					" WB entry:" + entry[WB][0] + " WB time:" + entry[WB][1] + " RT entry:" + entry[RT][0] + 
-					" RB time:" + entry[RT][1]
-				);
-			}*/
-			
-			
 			
 			System.out.println("Exec List data:");
 			for (int i = 0; i < exec_list.size(); i++)
@@ -857,11 +869,10 @@ public class sim {
 					" instRobTag:" + elEntry[instRobTag] + " timer:" + elEntry[timer]
 				);
 			}
+		}*/
 		}
-		}
-		ROB.printOut();
-		System.out.println(instrCount);
-		System.out.println("instruction data:");
+		//OB.printOut();
+		System.out.println("instruction count:" + instrCount);
 
 		PrintWriter writer = new PrintWriter("runOutput.txt", "UTF-8");
 		//writer.println("The first line");
@@ -884,8 +895,19 @@ public class sim {
 				"RT{" + entry[RT][0] + "," + entry[RT][1] + "}"
 			);
 		}
-		writer.close();
 		
+		writer.println("# === Simulator Command =========");
+		writer.println("# " + "./sim" + " " + args[0] + " " + args[1] + " " + args[2] + " " + args[3]);
+		writer.println("# === Processor Configuration ===");
+		writer.println("# ROB_SIZE = " + args[0]);
+		writer.println("# IQ_SIZE = " + args[1]);
+		writer.println("# WIDTH = " + args[2]);
+		writer.println("# === Simulation Results ========");
+		writer.println("# Dynamic Instruction Count    = " + instrCount);
+		writer.println("# Cycles                       = " + cycleCount);
+		writer.println("# Instructions Per Cycle (IPC) = " + String.format("%1$, .2f", ((double) instrCount/ (double) cycleCount)));
+		writer.close();
+				
 		System.out.println("cycle count: " + cycleCount);
 		
 	}
